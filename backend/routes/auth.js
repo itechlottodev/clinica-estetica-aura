@@ -80,7 +80,7 @@ router.post('/cadastro',
       await client.query('COMMIT');
 
       // Gerar token
-      const token = generateToken(usuarioId, empresaId);
+      const token = generateToken({ userId: usuarioId, empresaId });
 
       res.status(201).json({
         message: 'Empresa cadastrada com sucesso',
@@ -158,7 +158,7 @@ router.post('/login',
         return res.status(401).json({ error: 'Email ou senha incorretos' });
       }
 
-      const token = generateToken(usuario.id, usuario.empresa_id);
+      const token = generateToken({ userId: usuario.id, empresaId: usuario.empresa_id });
 
       res.json({
         message: 'Login realizado com sucesso',
