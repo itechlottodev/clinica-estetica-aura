@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: clinica-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: clinica_app
+      POSTGRES_PASSWORD: 7kR9mP2vB5nX8zQ1wL4tG7sJ0fH3dC6y
+      POSTGRES_DB: clinica_estetica
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c listen_addresses='*'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinica_app -d clinica_estetica"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local

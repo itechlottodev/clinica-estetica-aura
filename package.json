@@ -1,0 +1,21 @@
+{
+  "name": "clinica-estetica-saas",
+  "version": "1.0.0",
+  "description": "Sistema SaaS Multi-Tenant para Clínicas de Estética",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "migrate": "cd backend && npm run migrate",
+    "seed": "cd backend && npm run seed",
+    "setup": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ..",
+    "setup-completo": "powershell -ExecutionPolicy Bypass -File ./setup-completo.ps1"
+  },
+  "keywords": ["saas", "multi-tenant", "clinica", "estetica"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
