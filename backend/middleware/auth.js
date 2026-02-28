@@ -10,7 +10,12 @@ export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
+  console.log('[AUTH] Headers:', req.headers);
+  console.log('[AUTH] Authorization header:', authHeader);
+  console.log('[AUTH] Token extraído:', token ? 'presente' : 'ausente');
+
   if (!token) {
+    console.warn('[AUTH] Token não fornecido');
     return res.status(401).json({ 
       error: 'Token não fornecido',
       message: 'Autenticação necessária'
