@@ -1,17 +1,11 @@
 const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api`;
 
 class ApiClient {
-  constructor() {
-    this.token = localStorage.getItem('token');
-  }
-
   setToken(token) {
-    this.token = token;
     localStorage.setItem('token', token);
   }
 
   clearToken() {
-    this.token = null;
     localStorage.removeItem('token');
   }
 
@@ -21,8 +15,9 @@ class ApiClient {
       ...options.headers,
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     const config = {
