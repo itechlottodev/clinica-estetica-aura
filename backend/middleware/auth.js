@@ -29,7 +29,7 @@ export const authenticateToken = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       algorithms: ['HS256'], // Especificar algoritmo permitido
       issuer: 'clinica-estetica-api', // Validar emissor
-      maxAge: '7d' // Validar idade máxima
+      audience: 'clinica-estetica-client' // Validar audiência
     });
 
     // Validar estrutura do payload
