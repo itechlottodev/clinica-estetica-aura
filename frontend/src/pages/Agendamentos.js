@@ -1,6 +1,7 @@
 import api from '../utils/api.js';
 import Toast from '../components/Toast.js';
 import Modal from '../components/Modal.js';
+import { Loading } from '../components/Loading.js';
 import { formatDateTime } from '../utils/format.js';
 
 export default {
@@ -246,6 +247,7 @@ export default {
       dados.status = document.getElementById('status').value;
     }
 
+    Loading.show();
     try {
       if (id) {
         await api.put(`/agendamentos/${id}`, dados);
@@ -261,12 +263,15 @@ export default {
       await this.loadAgendamentos();
     } catch (error) {
       Toast.error(error.message);
+    } finally {
+      Loading.hide();
     }
   },
 
   async deleteAgendamento(id) {
     if (!confirm('Deseja realmente excluir este agendamento?')) return;
 
+    Loading.show();
     try {
       await api.delete(`/agendamentos/${id}`);
       Toast.success('Agendamento excluído com sucesso!');
@@ -275,6 +280,8 @@ export default {
       await this.loadAgendamentos();
     } catch (error) {
       Toast.error(error.message);
+    } finally {
+      Loading.hide();
     }
   }
 };

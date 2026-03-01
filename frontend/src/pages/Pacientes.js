@@ -1,6 +1,7 @@
 import api from '../utils/api.js';
 import Toast from '../components/Toast.js';
 import Modal from '../components/Modal.js';
+import { Loading } from '../components/Loading.js';
 import { formatCPF, formatPhone } from '../utils/format.js';
 
 export default {
@@ -199,6 +200,7 @@ export default {
       observacoes: document.getElementById('observacoes').value
     };
 
+    Loading.show();
     try {
       if (id) {
         await api.put(`/pacientes/${id}`, dados);
@@ -212,18 +214,23 @@ export default {
       await this.loadPacientes();
     } catch (error) {
       Toast.error(error.message);
+    } finally {
+      Loading.hide();
     }
   },
 
   async deletePaciente(id) {
     if (!confirm('Deseja realmente excluir este paciente?')) return;
 
+    Loading.show();
     try {
       await api.delete(`/pacientes/${id}`);
       Toast.success('Paciente excluído com sucesso!');
       await this.loadPacientes();
     } catch (error) {
       Toast.error(error.message);
+    } finally {
+      Loading.hide();
     }
   }
 };
