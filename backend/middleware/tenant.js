@@ -1,14 +1,14 @@
 import pool from '../config/database.js';
 
 export const attachEmpresa = async (req, res, next) => {
-  if (!req.userId) {
+  if (!req.user || !req.user.userId) {
     return res.status(401).json({ error: 'Não autenticado' });
   }
 
   try {
     const result = await pool.query(
       'SELECT empresa_id, funcao FROM usuarios WHERE id = $1',
-      [req.userId]
+      [req.user.userId]
     );
 
     if (result.rows.length === 0) {
