@@ -97,7 +97,7 @@ router.post('/',
         `INSERT INTO atendimentos (empresa_id, agendamento_id, paciente_id, procedimento_id, usuario_id, data_hora, valor_total, observacoes)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
-        [req.empresaId, agendamento_id, paciente_id, procedimento_id, req.userId, data_hora || new Date(), valor_total, observacoes]
+        [req.empresaId, agendamento_id, paciente_id, procedimento_id, req.user.userId, data_hora || new Date(), valor_total, observacoes]
       );
 
       const atendimentoId = atendimentoResult.rows[0].id;

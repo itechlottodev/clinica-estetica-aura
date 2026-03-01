@@ -100,7 +100,7 @@ router.post('/',
         `INSERT INTO agendamentos (empresa_id, paciente_id, procedimento_id, usuario_id, data_hora, duracao_minutos, observacoes)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
-        [req.empresaId, paciente_id, procedimento_id, req.userId, data_hora, duracao, observacoes]
+        [req.empresaId, paciente_id, procedimento_id, req.user.userId, data_hora, duracao, observacoes]
       );
 
       res.status(201).json({
