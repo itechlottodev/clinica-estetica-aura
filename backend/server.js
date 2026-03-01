@@ -56,7 +56,7 @@ app.use(xssProtection); // Proteção XSS
 app.use(hppProtection); // Proteção HPP
 app.use(sqlInjectionProtection); // Proteção SQL Injection
 app.use(securityLogger); // Log de segurança
-app.use(validateOrigin); // Validar origem
+// app.use(validateOrigin); // CORS já valida origem - removido para evitar bloqueios
 
 // Rate limiting global
 app.use('/api/', apiLimiter);
