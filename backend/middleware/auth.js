@@ -31,28 +31,40 @@ export const authenticateToken = (req, res, next) => {
   }
 
   try {
+    console.log('[AUTH] Iniciando validação JWT...');
+    console.log('[AUTH] JWT_SECRET presente:', !!process.env.JWT_SECRET);
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       algorithms: ['HS256'], // Especificar algoritmo permitido
       issuer: 'clinica-estetica-api', // Validar emissor
       audience: 'clinica-estetica-client' // Validar audiência
     });
 
+    console.log('[AUTH] Token decodificado com sucesso:', { userId: decoded.userId, empresaId: decoded.empresaId });
+
     // Validar estrutura do payload
     if (!decoded.userId || !decoded.empresaId) {
+      console.warn('[AUTH] Payload inválido - faltam userId ou empresaId');
       throw new Error('Payload do token inválido');
     }
 
     // Validar se o token não está muito antigo (além do expiresIn)
     const now = Math.floor(Date.now() / 1000);
     if (decoded.iat && (now - decoded.iat) > (7 * 24 * 60 * 60)) {
+      console.warn('[AUTH] Token muito antigo');
       throw new Error('Token expirado');
     }
 
+    console.log('[AUTH] Validação JWT concluída com sucesso');
     req.user = decoded;
     req.token = token; // Salvar token para possível revogação
     next();
   } catch (error) {
-    console.warn('[AUTH] Token inválido:', error.message);
+    console.error('[AUTH] ERRO na validação do token:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     
     let message = 'Token inválido ou expirado';
     if (error.name === 'TokenExpiredError') {
