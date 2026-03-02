@@ -42,6 +42,7 @@ export default {
   },
 
   async afterRender() {
+    window.agendamentosPage = this;
     await this.loadData();
     this.setupEventListeners();
   },
@@ -59,6 +60,23 @@ export default {
     const proximaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     document.getElementById('data-inicio').value = hoje;
     document.getElementById('data-fim').value = proximaSemana;
+  },
+
+  updateValorProcedimento() {
+    const select = document.getElementById('procedimento_id');
+    const selectedOption = select.options[select.selectedIndex];
+    const valor = selectedOption?.dataset?.valor || 0;
+    const infoDiv = document.getElementById('valor-procedimento-info');
+    const valorInput = document.getElementById('valor_previsto');
+    
+    if (valor > 0) {
+      infoDiv.innerHTML = `<span class="text-aura-lightpink font-medium">💰 Valor do procedimento: R$ ${parseFloat(valor).toFixed(2)}</span>`;
+      if (!valorInput.value) {
+        valorInput.value = parseFloat(valor).toFixed(2);
+      }
+    } else {
+      infoDiv.innerHTML = '';
+    }
   },
 
   async loadData() {
@@ -186,12 +204,19 @@ export default {
         
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Procedimento *</label>
-          <select id="procedimento_id" class="aura-input" required>
+          <select id="procedimento_id" class="aura-input" required onchange="window.agendamentosPage.updateValorProcedimento()">
             <option value="">Selecione um procedimento</option>
             ${this.data.procedimentos.map(p => `
-              <option value="${p.id}" ${agendamento?.procedimento_id == p.id ? 'selected' : ''}>${p.nome} - ${p.duracao_minutos || 0} min</option>
+              <option value="${p.id}" data-valor="${p.valor || 0}" ${agendamento?.procedimento_id == p.id ? 'selected' : ''}>${p.nome} - ${p.duracao_minutos || 0} min - R$ ${(p.valor || 0).toFixed(2)}</option>
             `).join('')}
           </select>
+          <div id="valor-procedimento-info" class="mt-2 text-sm text-gray-600"></div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Valor Previsto <span class="text-xs text-gray-500">(opcional)</span></label>
+          <input type="number" id="valor_previsto" class="aura-input" step="0.01" min="0" placeholder="0.00" value="${agendamento?.valor_previsto || ''}">
+          <p class="mt-1 text-xs text-gray-500">Deixe em branco para usar o valor padrão do procedimento</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -236,10 +261,13 @@ export default {
     const hora = document.getElementById('hora').value;
     const dataHora = `${data}T${hora}:00`;
 
+    const valorPrevisto = document.getElementById('valor_previsto').value;
+    
     const dados = {
       paciente_id: parseInt(document.getElementById('paciente_id').value),
       procedimento_id: parseInt(document.getElementById('procedimento_id').value),
       data_hora: dataHora,
+      valor_previsto: valorPrevisto ? parseFloat(valorPrevisto) : null,
       observacoes: document.getElementById('observacoes').value
     };
 

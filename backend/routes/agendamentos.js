@@ -71,7 +71,7 @@ router.post('/',
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { paciente_id, procedimento_id, data_hora, duracao_minutos, observacoes } = req.body;
+    const { paciente_id, procedimento_id, data_hora, duracao_minutos, valor_previsto, observacoes } = req.body;
 
     try {
       // Validar paciente
@@ -97,10 +97,10 @@ router.post('/',
       const duracao = duracao_minutos || procedimentoCheck.rows[0].duracao_minutos;
 
       const result = await pool.query(
-        `INSERT INTO agendamentos (empresa_id, paciente_id, procedimento_id, usuario_id, data_hora, duracao_minutos, observacoes)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO agendamentos (empresa_id, paciente_id, procedimento_id, usuario_id, data_hora, duracao_minutos, valor_previsto, observacoes)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
-        [req.empresaId, paciente_id, procedimento_id, req.user.userId, data_hora, duracao, observacoes]
+        [req.empresaId, paciente_id, procedimento_id, req.user.userId, data_hora, duracao, valor_previsto, observacoes]
       );
 
       res.status(201).json({
@@ -116,16 +116,16 @@ router.post('/',
 
 // Atualizar agendamento
 router.put('/:id', async (req, res) => {
-  const { data_hora, duracao_minutos, status, observacoes } = req.body;
+  const { data_hora, duracao_minutos, valor_previsto, status, observacoes } = req.body;
 
   try {
     const result = await pool.query(
       `UPDATE agendamentos 
-       SET data_hora = $1, duracao_minutos = $2, status = $3, observacoes = $4,
+       SET data_hora = $1, duracao_minutos = $2, valor_previsto = $3, status = $4, observacoes = $5,
            atualizado_em = CURRENT_TIMESTAMP
-       WHERE id = $5 AND empresa_id = $6
+       WHERE id = $6 AND empresa_id = $7
        RETURNING *`,
-      [data_hora, duracao_minutos, status, observacoes, req.params.id, req.empresaId]
+      [data_hora, duracao_minutos, valor_previsto, status, observacoes, req.params.id, req.empresaId]
     );
 
     if (result.rows.length === 0) {
