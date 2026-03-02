@@ -206,9 +206,10 @@ export default {
           <label class="block text-sm font-medium text-gray-700 mb-1">Procedimento *</label>
           <select id="procedimento_id" class="aura-input" required onchange="window.agendamentosPage.updateValorProcedimento()">
             <option value="">Selecione um procedimento</option>
-            ${this.data.procedimentos.map(p => `
-              <option value="${p.id}" data-valor="${p.valor || 0}" ${agendamento?.procedimento_id == p.id ? 'selected' : ''}>${p.nome} - ${p.duracao_minutos || 0} min - R$ ${(p.valor || 0).toFixed(2)}</option>
-            `).join('')}
+            ${this.data.procedimentos.map(p => {
+              const valor = parseFloat(p.valor) || 0;
+              return `<option value="${p.id}" data-valor="${valor}" ${agendamento?.procedimento_id == p.id ? 'selected' : ''}>${p.nome} - ${p.duracao_minutos || 0} min - R$ ${valor.toFixed(2)}</option>`;
+            }).join('')}
           </select>
           <div id="valor-procedimento-info" class="mt-2 text-sm text-gray-600"></div>
         </div>
